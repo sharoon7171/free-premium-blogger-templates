@@ -32,6 +32,7 @@ Themes are grouped by vendor. New vendor sections will be added as more cleaned 
 | **Marketify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-marketify/Marketify-1.0.xml) |
 | **Plexify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-plexify/Plexify-1.0.xml) |
 | **Xapify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-xapify/Xapify-1.0.xml) |
+| **Xpressify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-xpressify/Xpressify-1.0.xml) |
 <!-- download:end -->
 
 ## Install on Blogger
