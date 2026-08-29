@@ -21,18 +21,22 @@ title_case() {
 theme_meta() {
   local path="$1" base vendor theme_name version_label theme_slug tag asset
   path="${path#./}"
+  [[ "$path" == *.xml ]] || { echo "not an xml path: $path" >&2; return 1; }
   base="${path##*/}"
   base="${base%.xml}"
   vendor="$(slugify "${path%%/*}")"
-  if [[ "$base" =~ ^(.+)[[:space:]]+([0-9]+([.][0-9]+)*)$ ]]; then
-    theme_name="${BASH_REMATCH[1]}"
-    version_label="${BASH_REMATCH[2]}"
-  else
-    theme_name="$base"
-    version_label="—"
+  [[ -n "$vendor" && "$vendor" != "$(slugify "$base")" ]] || {
+    echo "theme xml must live under a vendor folder: $path" >&2
+    return 1
+  }
+  if [[ ! "$base" =~ ^(.+)[[:space:]]+([0-9]+([.][0-9]+)*)$ ]]; then
+    echo "invalid theme filename (expected 'Name 1.0.xml'): $path" >&2
+    return 1
   fi
+  theme_name="${BASH_REMATCH[1]}"
+  version_label="${BASH_REMATCH[2]}"
   theme_slug="$(slugify "$theme_name")"
-  tag="${vendor}-${theme_slug}"
+  tag="${vendor}-${theme_slug}-${version_label}"
   asset="${base// /-}.xml"
   printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$path" "$tag" "$asset" "$theme_name" "$version_label" "$vendor"
 }
@@ -69,23 +73,45 @@ release_exists() {
   gh release view "$1" --repo "$REPO" >/dev/null 2>&1
 }
 
+file_sha256() {
+  shasum -a 256 "$1" | awk '{print $1}'
+}
+
 upload_asset() {
-  local tag="$1" src="$2" asset="$3" title="$4" notes="$5" staged old
+  local tag="$1" src="$2" asset="$3" title="$4" notes="$5"
+  local staged old local_sha remote_dir remote_sha
   staged="$WORKDIR/$asset"
   cp "$src" "$staged"
-  if release_exists "$tag"; then
-    while IFS= read -r old; do
-      [[ -z "$old" || "$old" == "$asset" ]] && continue
-      gh release delete-asset "$tag" "$old" --repo "$REPO" --yes
-    done < <(gh release view "$tag" --repo "$REPO" --json assets -q '.assets[].name')
-    gh release upload "$tag" "$staged" --repo "$REPO" --clobber
-    gh release edit "$tag" --repo "$REPO" --title "$title" --notes "$notes"
-  else
+  local_sha="$(file_sha256 "$staged")"
+
+  if ! release_exists "$tag"; then
     gh release create "$tag" "$staged" --repo "$REPO" \
       --title "$title" \
       --notes "$notes" \
       --latest=false
+    return 0
   fi
+
+  while IFS= read -r old; do
+    [[ -z "$old" || "$old" == "$asset" ]] && continue
+    gh release delete-asset "$tag" "$old" --repo "$REPO" --yes
+    printf 'removed stale asset %s from %s\n' "$old" "$tag"
+  done < <(gh release view "$tag" --repo "$REPO" --json assets -q '.assets[].name')
+
+  if gh release view "$tag" --repo "$REPO" --json assets -q '.assets[].name' | grep -Fxq "$asset"; then
+    remote_dir="$WORKDIR/remote-$tag"
+    mkdir -p "$remote_dir"
+    gh release download "$tag" --repo "$REPO" --pattern "$asset" --dir "$remote_dir" --clobber
+    remote_sha="$(file_sha256 "$remote_dir/$asset")"
+    if [[ "$local_sha" == "$remote_sha" ]]; then
+      gh release edit "$tag" --repo "$REPO" --title "$title" --notes "$notes"
+      printf 'unchanged %s/%s\n' "$tag" "$asset"
+      return 0
+    fi
+  fi
+
+  gh release upload "$tag" "$staged" --repo "$REPO" --clobber
+  gh release edit "$tag" --repo "$REPO" --title "$title" --notes "$notes"
 }
 
 delete_theme_release() {
@@ -96,15 +122,18 @@ delete_theme_release() {
 
 sync_one() {
   local path="$1" meta tag asset theme_name version_label vendor title notes
-  [[ -f "$path" ]] || return 0
-  meta="$(theme_meta "$path")"
+  [[ -f "$path" ]] || { echo "missing theme file: $path" >&2; return 1; }
+  meta="$(theme_meta "$path")" || return 1
   IFS=$'\t' read -r path tag asset theme_name version_label vendor <<<"$meta"
-  title="${theme_name} (${vendor})"
+  title="${theme_name} ${version_label}"
   notes="Cleaned free Blogger theme XML.
 
 Source: \`${path}\`
+Theme: ${theme_name}
+Version: ${version_label}
+Vendor: ${vendor}
 
-One stable release per theme. Pushes that change this file replace the download asset in place."
+Each \`Name Version.xml\` file has its own release tag. Updating this file replaces the asset on this release only."
   upload_asset "$tag" "$path" "$asset" "$title" "$notes"
   printf 'synced %s -> %s/%s\n' "$path" "$tag" "$asset"
 }
@@ -124,47 +153,28 @@ render_readme_section() {
     printf '| **%s** | %s | [Download XML](%s) |\n' "$theme_name" "$version_label" "$url"
   done < <(
     while IFS= read -r path; do
-      theme_meta "$path"
+      theme_meta "$path" || exit 1
     done < <(list_theme_xmls)
   )
 }
 
 update_readme() {
   local readme="$ROOT/README.md" section_file="$WORKDIR/section.md" out="$WORKDIR/README.out"
-  [[ -f "$readme" ]] || return 0
+  [[ -f "$readme" ]] || { echo "missing README.md" >&2; exit 1; }
+  grep -Fq "$MARKER_START" "$readme" || { echo "README.md missing $MARKER_START" >&2; exit 1; }
+  grep -Fq "$MARKER_END" "$readme" || { echo "README.md missing $MARKER_END" >&2; exit 1; }
   render_readme_section >"$section_file"
-
-  if grep -Fq "$MARKER_START" "$readme" && grep -Fq "$MARKER_END" "$readme"; then
-    awk -v start="$MARKER_START" -v end="$MARKER_END" -v sf="$section_file" '
-      $0 == start {
-        print
-        while ((getline line < sf) > 0) print line
-        close(sf)
-        skip=1
-        next
-      }
-      $0 == end { skip=0; print; next }
-      !skip { print }
-    ' "$readme" >"$out"
-  else
-    awk -v sf="$section_file" '
-      /^## Download$/ {
-        print
-        print ""
-        print "Themes are grouped by vendor. New vendor sections will be added as more cleaned XMLs are published."
-        print ""
-        print "<!-- download:start -->"
-        while ((getline line < sf) > 0) print line
-        close(sf)
-        print "<!-- download:end -->"
-        print ""
-        skip=1
-        next
-      }
-      skip && /^## / { skip=0 }
-      !skip { print }
-    ' "$readme" >"$out"
-  fi
+  awk -v start="$MARKER_START" -v end="$MARKER_END" -v sf="$section_file" '
+    $0 == start {
+      print
+      while ((getline line < sf) > 0) print line
+      close(sf)
+      skip=1
+      next
+    }
+    $0 == end { skip=0; print; next }
+    !skip { print }
+  ' "$readme" >"$out"
   mv "$out" "$readme"
 }
 
@@ -206,7 +216,8 @@ fi
 
 for path in "${SYNC_PATHS[@]+"${SYNC_PATHS[@]}"}"; do
   [[ -z "${path:-}" ]] && continue
-  IFS=$'\t' read -r _ tag _ _ _ _ <<<"$(theme_meta "$path")"
+  meta="$(theme_meta "$path")" || exit 1
+  IFS=$'\t' read -r _ tag _ _ _ _ <<<"$meta"
   printf '%s\n' "$tag" >>"$EXPECTED_TAGS"
 done
 
@@ -222,14 +233,15 @@ fi
 
 for path in "${DELETE_PATHS[@]+"${DELETE_PATHS[@]}"}"; do
   [[ -z "${path:-}" ]] && continue
-  IFS=$'\t' read -r _ tag _ _ _ _ <<<"$(theme_meta "$path")"
+  meta="$(theme_meta "$path")" || exit 1
+  IFS=$'\t' read -r _ tag _ _ _ _ <<<"$meta"
   delete_theme_release "$tag"
   printf 'deleted release for %s (%s)\n' "$path" "$tag"
 done
 
 for path in "${SYNC_PATHS[@]+"${SYNC_PATHS[@]}"}"; do
   [[ -z "${path:-}" ]] && continue
-  sync_one "$path"
+  sync_one "$path" || exit 1
 done
 
 update_readme

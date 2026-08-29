@@ -31,24 +31,60 @@ jobs:
             echo "mode=all" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
           before="${{ github.event.before }}"
-          if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
-            echo "mode=all" >> "$GITHUB_OUTPUT"
-            exit 0
+          if [[ -z "$before" ]]; then
+            echo "github.event.before is empty; cannot compute XML delta" >&2
+            exit 1
           fi
-          if ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
-            echo "mode=all" >> "$GITHUB_OUTPUT"
-            exit 0
+          if [[ "$before" =~ ^0+$ ]]; then
+            echo "github.event.before is a zero SHA; push delta is unavailable" >&2
+            exit 1
           fi
-          mapfile -t added_modified < <(git diff --name-only --diff-filter=AM "$before" "${{ github.sha }}" -- '*.xml' | grep -v '^\.github/' | grep -v '^tmp/' || true)
-          mapfile -t deleted < <(git diff --name-only --diff-filter=D "$before" "${{ github.sha }}" -- '*.xml' | grep -v '^\.github/' | grep -v '^tmp/' || true)
+          if ! git cat-file -e "${before}^{commit}"; then
+            echo "commit $before is not in this clone; cannot compute XML delta" >&2
+            exit 1
+          fi
+
+          sync_file="$(mktemp)"
+          delete_file="$(mktemp)"
+          trap 'rm -f "$sync_file" "$delete_file"' EXIT
+
+          while IFS=$'\t' read -r status path extra; do
+            [[ -z "${status:-}" || -z "${path:-}" ]] && continue
+            case "$status" in
+              A|M)
+                [[ "$path" == .github/* || "$path" == tmp/* ]] && continue
+                printf '%s\n' "$path" >> "$sync_file"
+                ;;
+              D)
+                [[ "$path" == .github/* || "$path" == tmp/* ]] && continue
+                printf '%s\n' "$path" >> "$delete_file"
+                ;;
+              R*)
+                [[ "$path" == .github/* || "$path" == tmp/* ]] && continue
+                printf '%s\n' "$path" >> "$delete_file"
+                [[ -z "${extra:-}" ]] && {
+                  echo "rename is missing destination path: $status $path" >&2
+                  exit 1
+                }
+                [[ "$extra" == .github/* || "$extra" == tmp/* ]] && continue
+                printf '%s\n' "$extra" >> "$sync_file"
+                ;;
+              *)
+                echo "unhandled git name-status: $status $path ${extra-}" >&2
+                exit 1
+                ;;
+            esac
+          done < <(git diff --name-status --diff-filter=AMRD -M "$before" "${{ github.sha }}" -- '*.xml')
+
           {
             echo "mode=delta"
             echo "sync<<EOF"
-            printf '%s\n' "${added_modified[@]-}"
+            sort -u "$sync_file"
             echo "EOF"
             echo "delete<<EOF"
-            printf '%s\n' "${deleted[@]-}"
+            sort -u "$delete_file"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
@@ -71,11 +107,8 @@ jobs:
               [[ -z "$path" ]] && continue
               args+=(--delete "$path")
             done <<< "${{ steps.changes.outputs.delete }}"
-            if [[ ${#args[@]} -eq 0 ]]; then
-              args+=(--all)
-            fi
           fi
-          ./scripts/sync-theme-releases.sh "${args[@]}"
+          ./scripts/sync-theme-releases.sh ${args[@]+"${args[@]}"}
 
       - name: Commit README download links
         run: |
