@@ -22,13 +22,17 @@ Example on cleaned Templateify releases:
 
 Themes are grouped by vendor. New vendor sections will be added as more cleaned XMLs are published.
 
+<!-- download:start -->
 ### Templateify
 
 | Theme | Version | Download |
 | --- | --- | --- |
-| **Everify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/raw/main/templateify/Everify%20Free%20Version%201.0.xml) |
-| **Xapify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/raw/main/templateify/Xapify%20Free%20Version%201.0.xml) |
-| **Marketify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/raw/main/templateify/Marketify%20Free%20Version%201.0.xml) |
+| **Everify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-everify/Everify-1.0.xml) |
+| **Magazin** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-magazin/Magazin-1.0.xml) |
+| **Marketify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-marketify/Marketify-1.0.xml) |
+| **Plexify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-plexify/Plexify-1.0.xml) |
+| **Xapify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-xapify/Xapify-1.0.xml) |
+<!-- download:end -->
 
 ## Install on Blogger
 
