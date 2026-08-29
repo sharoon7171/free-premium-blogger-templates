@@ -27,6 +27,7 @@ Themes are grouped by vendor. New vendor sections will be added as more cleaned 
 
 | Theme | Version | Download |
 | --- | --- | --- |
+| **Castify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-castify-1.0/Castify-1.0.xml) |
 | **Everify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-everify-1.0/Everify-1.0.xml) |
 | **Gizmo Blog** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-gizmo-blog-1.0/Gizmo-Blog-1.0.xml) |
 | **Magazin** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-magazin-1.0/Magazin-1.0.xml) |
