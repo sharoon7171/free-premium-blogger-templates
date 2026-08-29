@@ -23,6 +23,7 @@ Example on cleaned Templateify releases:
 | Theme | Vendor | Version | Download |
 | --- | --- | --- | --- |
 | **Everify** | Templateify | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/everify-free-1.0/Everify-Free-Version-1.0.xml) |
+| **Xapify** | Templateify | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/raw/main/templateify/Xapify%20Free%20Version%201.0.xml) |
 
 ## Install on Blogger
 
