@@ -139,22 +139,26 @@ Each \`Name Version.xml\` file has its own release tag. Updating this file repla
 }
 
 render_readme_section() {
-  local path tag asset theme_name version_label vendor prev_vendor="" url heading
+  local path tag asset theme_name version_label vendor prev_vendor="" url heading n=0
   while IFS=$'\t' read -r path tag asset theme_name version_label vendor; do
     if [[ "$vendor" != "$prev_vendor" ]]; then
       [[ -n "$prev_vendor" ]] && printf '\n'
       heading="$(title_case "$vendor")"
       printf '### %s\n\n' "$heading"
-      printf '| Theme | Version | Download |\n'
-      printf '| --- | --- | --- |\n'
+      printf '| # | Theme | Version | Download |\n'
+      printf '| --- | --- | --- | --- |\n'
       prev_vendor="$vendor"
+      n=0
     fi
+    n=$((n + 1))
     url="https://github.com/${REPO}/releases/download/${tag}/${asset}"
-    printf '| **%s** | %s | [Download XML](%s) |\n' "$theme_name" "$version_label" "$url"
+    printf '| %d | **%s** | %s | [Download XML](%s) |\n' "$n" "$theme_name" "$version_label" "$url"
   done < <(
-    while IFS= read -r path; do
-      theme_meta "$path" || exit 1
-    done < <(list_theme_xmls)
+    {
+      while IFS= read -r path; do
+        theme_meta "$path" || exit 1
+      done < <(list_theme_xmls)
+    } | LC_ALL=C sort -t $'\t' -k6,6 -k4,4f -k5,5V
   )
 }
 
