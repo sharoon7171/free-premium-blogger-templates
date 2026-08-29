@@ -26,9 +26,9 @@ Themes are grouped by vendor. New vendor sections will be added as more cleaned 
 
 | Theme | Version | Download |
 | --- | --- | --- |
-| **Everify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/everify-free-1.0/Everify-Free-Version-1.0.xml) |
-| **Xapify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/xapify-free-1.0/Xapify-Free-Version-1.0.xml) |
-| **Marketify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/marketify-free-1.0/Marketify-Free-Version-1.0.xml) |
+| **Everify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/raw/main/templateify/Everify%20Free%20Version%201.0.xml) |
+| **Xapify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/raw/main/templateify/Xapify%20Free%20Version%201.0.xml) |
+| **Marketify** | Free 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/raw/main/templateify/Marketify%20Free%20Version%201.0.xml) |
 
 ## Install on Blogger
 
