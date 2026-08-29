@@ -1,0 +1,91 @@
+name: Sync theme releases
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.xml"
+  workflow_dispatch:
+
+concurrency:
+  group: sync-theme-releases
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve changed themes
+        id: changes
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "mode=all" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          before="${{ github.event.before }}"
+          if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
+            echo "mode=all" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+            echo "mode=all" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          mapfile -t added_modified < <(git diff --name-only --diff-filter=AM "$before" "${{ github.sha }}" -- '*.xml' | grep -v '^\.github/' | grep -v '^tmp/' || true)
+          mapfile -t deleted < <(git diff --name-only --diff-filter=D "$before" "${{ github.sha }}" -- '*.xml' | grep -v '^\.github/' | grep -v '^tmp/' || true)
+          {
+            echo "mode=delta"
+            echo "sync<<EOF"
+            printf '%s\n' "${added_modified[@]-}"
+            echo "EOF"
+            echo "delete<<EOF"
+            printf '%s\n' "${deleted[@]-}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Sync releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          chmod +x scripts/sync-theme-releases.sh
+          args=()
+          if [[ "${{ steps.changes.outputs.mode }}" == "all" ]]; then
+            args+=(--all)
+          else
+            while IFS= read -r path; do
+              [[ -z "$path" ]] && continue
+              args+=(--sync "$path")
+            done <<< "${{ steps.changes.outputs.sync }}"
+            while IFS= read -r path; do
+              [[ -z "$path" ]] && continue
+              args+=(--delete "$path")
+            done <<< "${{ steps.changes.outputs.delete }}"
+            if [[ ${#args[@]} -eq 0 ]]; then
+              args+=(--all)
+            fi
+          fi
+          ./scripts/sync-theme-releases.sh "${args[@]}"
+
+      - name: Commit README download links
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- README.md; then
+            echo "README unchanged"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "sync README download links with theme releases"
+          git push
