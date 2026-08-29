@@ -20,8 +20,6 @@ Example on cleaned Templateify releases:
 
 ## Download
 
-Themes are grouped by vendor. New vendor sections will be added as more cleaned XMLs are published.
-
 <!-- download:start -->
 ### Templateify
 
