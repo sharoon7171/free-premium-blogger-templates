@@ -154,11 +154,9 @@ render_readme_section() {
     url="https://github.com/${REPO}/releases/download/${tag}/${asset}"
     printf '| %d | **%s** | %s | [Download XML](%s) |\n' "$n" "$theme_name" "$version_label" "$url"
   done < <(
-    {
-      while IFS= read -r path; do
-        theme_meta "$path" || exit 1
-      done < <(list_theme_xmls)
-    } | LC_ALL=C sort -t $'\t' -k6,6 -k4,4f -k5,5V
+    while IFS= read -r path; do
+      theme_meta "$path" || exit 1
+    done < <(list_theme_xmls)
   )
 }
 
