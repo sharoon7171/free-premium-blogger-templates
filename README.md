@@ -25,15 +25,24 @@ Example on cleaned Templateify releases:
 
 | # | Theme | Version | Download |
 | --- | --- | --- | --- |
-| 1 | **Castify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-castify-1.0/Castify-1.0.xml) |
-| 2 | **Everify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-everify-1.0/Everify-1.0.xml) |
-| 3 | **Gizmo Blog** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-gizmo-blog-1.0/Gizmo-Blog-1.0.xml) |
-| 4 | **Magazin** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-magazin-1.0/Magazin-1.0.xml) |
-| 5 | **Marketify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-marketify-1.0/Marketify-1.0.xml) |
-| 6 | **Plexify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-plexify-1.0/Plexify-1.0.xml) |
-| 7 | **Xapify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-xapify-1.0/Xapify-1.0.xml) |
-| 8 | **Xpressify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-xpressify-1.0/Xpressify-1.0.xml) |
-| 9 | **Zing Blog** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-zing-blog-1.0/Zing-Blog-1.0.xml) |
+| 1 | **B-Blog** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-b-blog-1.0/B-Blog-1.0.xml) |
+| 2 | **Blogazine** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-blogazine-1.0/Blogazine-1.0.xml) |
+| 3 | **Castify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-castify-1.0/Castify-1.0.xml) |
+| 4 | **Eris** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-eris-1.0/Eris-1.0.xml) |
+| 5 | **Everify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-everify-1.0/Everify-1.0.xml) |
+| 6 | **Flexify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-flexify-1.0/Flexify-1.0.xml) |
+| 7 | **Gizmo Blog** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-gizmo-blog-1.0/Gizmo-Blog-1.0.xml) |
+| 8 | **Magazin** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-magazin-1.0/Magazin-1.0.xml) |
+| 9 | **Marketify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-marketify-1.0/Marketify-1.0.xml) |
+| 10 | **Next** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-next-1.0/Next-1.0.xml) |
+| 11 | **Plexify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-plexify-1.0/Plexify-1.0.xml) |
+| 12 | **Renzzy** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-renzzy-1.0/Renzzy-1.0.xml) |
+| 13 | **Revision** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-revision-1.0/Revision-1.0.xml) |
+| 14 | **Typify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-typify-1.0/Typify-1.0.xml) |
+| 15 | **Xapify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-xapify-1.0/Xapify-1.0.xml) |
+| 16 | **Xpressify** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-xpressify-1.0/Xpressify-1.0.xml) |
+| 17 | **Zing Blog** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-zing-blog-1.0/Zing-Blog-1.0.xml) |
+| 18 | **iNews** | 1.0 | [Download XML](https://github.com/sharoon7171/free-premium-blogger-templates/releases/download/templateify-inews-1.0/iNews-1.0.xml) |
 <!-- download:end -->
 
 ## Install on Blogger
